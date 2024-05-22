@@ -1,0 +1,27 @@
+{% extends "container.twig" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-sm-6">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Serial Id</th>
+                    <th>Product</th>
+                    <th>Product Info</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for product in products %}
+                <tr>
+                    <td>{{ product.serialId }}</td>
+                    <td>{{ product.name }}</td>
+                    {# link to product #}
+                    <td><a href="/customer/products/{{ product.id }}" class="btn btn-info" role="button">Info</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock content %}
