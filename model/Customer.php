@@ -1,7 +1,7 @@
 <?php
 namespace app\kahuna\client\model;
 
-use app\kahuna\api\model\DBConnect;
+use app\kahuna\client\model\DBConnect;
 use \PDO;
 class Customer
 {
@@ -18,6 +18,7 @@ class Customer
     {
         $this->name = $name;
         $this->surname = $surname;
+        $this->mob_no = $mob_no;
         $this->email = $email;
         $this->password = $password;
         $this->accessLevel = $accessLevel;
@@ -52,6 +53,7 @@ class Customer
         $sth->bindValue('email', $customer->getEmail());
         $sth->execute();
         $result = $sth->fetch(PDO::FETCH_OBJ);
+        var_dump($result);
         if($result && password_verify($customer->getPassword(), $result->password)){   
             return new Customer(
                 name: $result->name,
@@ -66,6 +68,69 @@ class Customer
         return null;
     }
 
+    public static function registrationValidation($data)
+    {
+        echo "<p>registrationValidation Function</p>";
+        $errors = [];
+        if(filter_var($_SERVER['REQUEST_METHOD'], FILTER_UNSAFE_RAW, FILTER_NULL_ON_FAILURE) === 'POST'){
+            $name = filter_input(INPUT_POST, 'name', FILTER_DEFAULT);
+            $surname = filter_input(INPUT_POST, 'surname', FILTER_DEFAULT);
+            $mob_no = filter_input(INPUT_POST, 'mob_no', FILTER_DEFAULT);
+            $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
+            $password = filter_input(INPUT_POST, 'password', FILTER_DEFAULT);
+            $confirm_password = filter_input(INPUT_POST, 'confirm_password', FILTER_DEFAULT);
+
+            if(empty($name) ||  strlen($name) > 50){
+                $errors[] = "Please type a name that is less than 50 characters.";
+            }
+            if(empty($surname) ||  strlen($surname) > 100){
+                $errors[] = "Please type a surname that is less than 100 characters.";
+            }
+            if(empty($mob_no) ||  strlen($mob_no) != 8){
+                $errors[] = "Please type a mobile no that is 8 characters long.";
+            }
+            if(empty($email) ||  strlen($surname) > 255){
+                $errors[] = "Please type a valid email.";
+            }
+            if(empty($password)){
+                $errors[] = "Please type a password";
+            }
+            if(empty($confirm_password)){
+                $errors[] = "Please type again the password";
+            }
+            if($password !== $confirm_password){
+                $errors[] = "Passwords do not match";
+            }
+
+            if(!empty($errors)){
+                return $errors;
+            }
+
+            if(empty($errors)){
+                echo "<br>";
+                var_dump($mob_no);
+                $customer = new Customer(name: $name, surname: $surname, mob_no: $mob_no, email: $email, password: $password);
+                self::registerVerification($customer);
+            }
+
+        }
+
+        
+    }
+    
+    public static function registerVerification(Customer $customer)
+    {
+   
+        $sql  = "SELECT * FROM customer WHERE email=:email";
+        $sth = self::$db->prepare($sql);
+        $sth->bindValue('email', $customer->getEmail());
+        $sth->execute();
+        if($sth->rowCount() === 0){
+            self::register($customer);
+        }else{
+            return  "Email already in use";
+        }
+}
 
 
     /**

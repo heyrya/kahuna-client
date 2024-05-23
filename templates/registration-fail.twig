@@ -1,0 +1,14 @@
+{% extends "container.twig" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-sm-6">
+        <ul class="list-group">
+            {% for error in errors %}
+                <li class="list-group-item">{{error}}</li>
+            {% endfor %}
+        </ul>
+        <a href="/customer/register" class="btn btn-default">Register</a>
+    </div>
+</div>
+{% endblock %}
