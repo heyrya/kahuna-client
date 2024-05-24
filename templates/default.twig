@@ -8,6 +8,19 @@
     </div>
 </div>
 {% endif %}
+{% if product_register %}
+<div class="row">
+    <div class="col-sm-8">
+        <h3>Product has been registered successfully</h3>
+        <p>Product Details</p>
+        <ul>
+            <li>Serial Id: {{ product.serialId }}</li>
+            <li>Name: {{ product.name }}</li>
+            <li>Warranty: {{ product.warranty }}</li>
+        </ul>
+    </div>
+</div>
+{% endif %}
 
 <p>Default page</p>
 {% endblock %}

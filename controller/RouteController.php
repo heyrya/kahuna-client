@@ -1,8 +1,10 @@
 <?php
 namespace app\kahuna\client\controller;
 
+use app\kahuna\client\model\Product;
 use \Twig\Environment;
 use \app\kahuna\client\model\Customer;
+use \stdClass;
 
 class RouteController
 {
@@ -51,6 +53,25 @@ class RouteController
 
     }
 
+    public static function viewRegisterProductCustomer(array $params, array $data):void
+    {
+        if(isset($_SESSION['email'])){
+            $products = Product::getProductsUnregistered();
+            $products_arr = [];
+            foreach($products as $key=> $product){
+                $products_arr[$key] = new stdClass; 
+                $products_arr[$key]->id = $product->getId();
+                $products_arr[$key]->serialId = $product->getSerialId();
+                $products_arr[$key]->name = $product->getName();
+                $products_arr[$key]->warranty = $product->getWarranty();
+            }
+            print_r($products_arr); 
+            $params['products'] = $products_arr;
+            self::showView('product-register', $params);
+        }else{
+            self::showView('default', $params);
+        }
+    }
 
 
     /**-------------------- */
@@ -75,6 +96,7 @@ class RouteController
         $customer = Customer::authenticate($customer);
         if($customer){
             $params['login'] = true;
+            $_SESSION['id'] = $customer->getId();
             $_SESSION['email'] = $customer->getEmail();
             $_SESSION['name'] = $customer->getName();
             $_SESSION['surname'] = $customer->getSurname();
@@ -88,6 +110,21 @@ class RouteController
     {
         AuthController::logout();
         $params['login'] = false;
+        self::showView('default', $params);
+    }
+
+    public static function actionRegisterProductCustomer(array $params, array $data): void
+    {
+        $productId = filter_input(INPUT_POST, 'product_register_id', FILTER_VALIDATE_INT);
+        $customerId = filter_var($_SESSION['id'], FILTER_VALIDATE_INT);
+        $product = new Product(id: $productId);
+        $product = Product::productRegisterCustomer($product, $customerId); 
+        var_dump($product);
+        $params['product'] = new stdClass;
+        $params['product']->serialId = $product->getSerialId();  
+        $params['product']->name = $product->getName();  
+        $params['product']->warranty = $product->getWarranty();  
+        $params['product_register'] = true;
         self::showView('default', $params);
     }
 
