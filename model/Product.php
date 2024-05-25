@@ -3,6 +3,7 @@ namespace app\kahuna\client\model;
 
 use app\kahuna\client\model\DBConnect;
 use \PDO;
+use \stdClass;
 
 class Product
 {
@@ -24,6 +25,8 @@ class Product
         self::$db = DBConnect::getInstance()->getConnection();
     }
 
+    
+   
     public static function getProductsUnregistered()
     {
         self::$db = DBConnect::getInstance()->getConnection();
@@ -56,11 +59,21 @@ class Product
         return $product;
     }
 
+    public static function getProduct(int $productId)
+    {
+        self::$db = DBConnect::getInstance()->getConnection();
+        $sql = "SELECT * FROM productstock WHERE id = :productId";
+        $sth = self::$db->prepare($sql);
+        $sth->bindValue('productId', $productId);
+        $sth->execute();
+        $result = $sth->fetch(PDO::FETCH_OBJ);
+        return $result;
+    }
     public static function getProductsCustomer(int $customerId)
     {
         self::$db = DBConnect::getInstance()->getConnection();
         $sql = <<<SQL
-        SELECT productstock.id, productstock.serialId, productstock.name
+        SELECT productstock.id, productstock.serialId, productstock.name, productstock.warranty, customerproduct.registrationDate
         FROM productstock
         JOIN customerproduct ON customerproduct.productstockId = productstock.id
         WHERE customerproduct.customerId = :customerId;
@@ -68,10 +81,39 @@ class Product
         $sth = self::$db->prepare($sql);
         $sth->bindValue('customerId', $customerId);
         $sth->execute();
-        $products = $sth->fetchAll(PDO::FETCH_FUNC, fn(...$fields) => new Product(...$fields));
+        $products = $sth->fetchAll(PDO::FETCH_FUNC, function ($id, $serialId, $name, $warranty, $registrationDate){
+            // warranty time 1 day in seconds
+            $warranty_period = 86400;
+            $registrayionTime = strtotime($registrationDate);
+            // get current time in seconds
+            $now = time();
+            $elapsedTime = $now - $registrayionTime;
+            $product = new stdClass;
+            $product->id = $id;
+            $product->serialId = $serialId;
+            $product->name = $name;
+
+
+            if($elapsedTime > 21000){
+                $product->expired = 1;
+                return $product;
+            }else{
+                $product->expired = 0;
+                return $product;
+            }
+        });
+        // $products = $sth->fetchAll(PDO::FETCH_FUNC, fn(...$fields) => new Product(...$fields));
         return $products;
     }
 
+    public static function checkWarranty(Product $products)
+    {
+        foreach($products as $product){
+
+        }
+    }
+
+    
     /**
      * Get the value of id
      */

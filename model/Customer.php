@@ -53,19 +53,24 @@ class Customer
         $sth->bindValue('email', $customer->getEmail());
         $sth->execute();
         $result = $sth->fetch(PDO::FETCH_OBJ);
-        var_dump($result);
-        if($result && password_verify($customer->getPassword(), $result->password)){   
-            return new Customer(
-                name: $result->name,
-                surname:$result->surname,
-                mob_no: $result->mob_no,
-                email: $result->email,
-                password: $result->password,
-                id: $result->id
-            );
+        if($result){
+            if(password_verify($customer->getPassword(), $result->password)){
+                return new Customer(
+                    name: $result->name,
+                    surname:$result->surname,
+                    mob_no: $result->mob_no,
+                    email: $result->email,
+                    password: $result->password,
+                    id: $result->id
+                );
+            }else{
+                $error= "Password is incorrect.";
+                return $error;
+            }
+        }else{
+            $error = "Email does not exists";
+            return $error;
         }
-
-        return null;
     }
 
     public static function registrationValidation($data)

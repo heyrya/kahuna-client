@@ -1,0 +1,29 @@
+{% extends "container.twig" %}
+
+{% block content %}
+{% if register %}
+<div class="row">
+    <div class="col-sm-8">
+        <h3>Registration complete. Please login</h3>
+    </div>
+</div>
+{% endif %}
+{% if product_register %}
+<div class="row">
+    <div class="alert alert-success">
+        Product has been registered successfully
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-8">
+        <ul class="list-group">
+            <li class="list-group-item">Serial Id: {{ product.serialId }}</li>
+            <li class="list-group-item">Name: {{ product.name }}</li>
+            <li class="list-group-item">Warranty: {{ product.warranty }} years</li>
+        </ul>
+    </div>
+</div>
+{% endif %}
+
+<p>Default page</p>
+{% endblock %}

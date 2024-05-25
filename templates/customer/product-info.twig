@@ -1,3 +1,7 @@
+{% extends "container.twig" %}
+
+{% block content %}
+
 <div class="row">
 
     <div class="col-sm-6">
@@ -11,9 +15,8 @@
             </thead>
             <tbody>
                 <tr>
-                    <td>8457</td>
-                    <td>Microwave Oven</td>
-                    <td>1 year 3 days</td>
+                    <td>{{product.serialId}}</td>
+                    <td>{{product.name}}</td>
                 </tr>
             </tbody>
         </table>
@@ -30,3 +33,4 @@
         
     
 </div>
+{% endblock %}
