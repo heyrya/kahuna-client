@@ -46,7 +46,14 @@ class RouteController
 
     public static function viewProductsCustomer(array $params, array $data):void
     {
-
+        if(isset($_SESSION['email'])){
+            $customerId = filter_var($_SESSION['id'], FILTER_VALIDATE_INT);
+            $products = Product::getProductsCustomer($customerId);
+            $params['products'] = $products;
+            self::showView('products-list', $params);
+        }else{
+            self::showView('default', $params);
+        }
     }
     public static function viewAccountCustomer(array $params, array $data):void
     {

@@ -56,6 +56,22 @@ class Product
         return $product;
     }
 
+    public static function getProductsCustomer(int $customerId)
+    {
+        self::$db = DBConnect::getInstance()->getConnection();
+        $sql = <<<SQL
+        SELECT productstock.id, productstock.serialId, productstock.name
+        FROM productstock
+        JOIN customerproduct ON customerproduct.productstockId = productstock.id
+        WHERE customerproduct.customerId = :customerId;
+        SQL;
+        $sth = self::$db->prepare($sql);
+        $sth->bindValue('customerId', $customerId);
+        $sth->execute();
+        $products = $sth->fetchAll(PDO::FETCH_FUNC, fn(...$fields) => new Product(...$fields));
+        return $products;
+    }
+
     /**
      * Get the value of id
      */
