@@ -1,0 +1,28 @@
+{% extends "container_agent.twig" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-sm-8">
+        <form action="/agent/action/create-product" method="POST">
+            <div class="form-group">
+                <label for="serialId">Serial Id</label>
+                <input type="text" name="serialId" class="form-control" pattern="\d{4}" placeholder="Ender a 4 digit serial code" required>
+            </div>
+            <div class="form-group">
+                <label for="productName">Product Name</label>
+                <input type="text" name="name" class="form-control" maxlength="150" required>
+            </div>
+            <div class="form-group">
+                <label for="warranty">Warranty</label>
+                <input type="number" name="warranty" class="form-control" min="1" max="7" required>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create Product" class="form-control">
+            </div>
+        </form>
+    </div>
+    <div class="col-sm-4">
+
+    </div>
+</div>
+{% endblock %}

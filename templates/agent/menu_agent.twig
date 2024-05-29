@@ -1,0 +1,24 @@
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a href="/agent" class="navbar-brand">Kahuna Ltd</a>
+        </div>
+        <ul class="nav navbar-nav">
+            {% if login == true %}
+                <li><a href="/agent/create-product">Create Product</a></li>
+                <li><a href="/agent/tickets">View Tickets</a></li>
+            {% endif %}
+        </ul>
+        
+        <ul class="nav navbar-nav navbar-right">
+            {% if login == false %}            
+                <li><a href="/agent/login">Sign In</a></li>
+            {% endif %}
+            {% if login == true %}            
+                {# <li><a href="/customer/account">My Account</a></li> #}
+                <li><a href="/agent/action/logout">Logout</a></li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>
+

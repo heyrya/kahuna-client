@@ -1,0 +1,39 @@
+{% extends "container_agent.twig" %}
+
+{% block content %}
+{% if product %}
+<div class="row">
+    <div class="alert alert-success">
+        Product has been created successfully
+    </div>
+</div>
+{% endif %}
+
+{% if ticket %}
+<div class="row">
+    <div class="alert alert-success">
+        Ticket Reply Submittedy
+    </div>
+</div>
+{% endif %}
+
+{% if login %}
+<div class="row">
+    <div class="col-sm-6">
+        <a href="/agent/create-product" class="btn btn-primary btn-block font-weight-bold" style="font-size:2.5rem"  role="button">Create a Product</a>
+    </div>
+    <div class="col-sm-6">
+        <a href="/agent/tickets" class="btn btn-primary btn-block font-weight-bold" style="font-size:2.5rem" role="button">View Tickets</a>
+    </div>
+</div>
+{% else %}
+<div class="row">
+    <div class="alert alert-success">
+        Please login to view administration options
+    </div>
+</div>    
+
+{% endif %}
+
+
+{% endblock %}

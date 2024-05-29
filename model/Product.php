@@ -1,9 +1,13 @@
 <?php
 namespace app\kahuna\client\model;
 
+// constant defined for time in seconds for a year
+define("YEAR_IN_SECONDS", 31536000);
+
 use app\kahuna\client\model\DBConnect;
 use \PDO;
 use \stdClass;
+use \DateTime;
 
 class Product
 {
@@ -14,6 +18,7 @@ class Product
     private ?string $name;
     private ?int $warranty;
     private ?int $registered;
+    
 
     public function __construct(?int $id = 0, ?string $serialId = null, ?string $name = null, ?int $warranty = 0, ?int $registered = 0)
     {
@@ -82,37 +87,43 @@ class Product
         $sth->bindValue('customerId', $customerId);
         $sth->execute();
         $products = $sth->fetchAll(PDO::FETCH_FUNC, function ($id, $serialId, $name, $warranty, $registrationDate){
-            // warranty time 1 day in seconds
-            $warranty_period = 86400;
-            $registrayionTime = strtotime($registrationDate);
+            $registrationTime = strtotime($registrationDate);
             // get current time in seconds
             $now = time();
-            $elapsedTime = $now - $registrayionTime;
+            $elapsedTime = $now - $registrationTime;
+           
             $product = new stdClass;
             $product->id = $id;
             $product->serialId = $serialId;
             $product->name = $name;
-
-
-            if($elapsedTime > 21000){
+            
+            // calculate warranty period in seconds
+            $warrantyTimeSeconds = $warranty * YEAR_IN_SECONDS;
+    
+            if($elapsedTime > $warrantyTimeSeconds){
                 $product->expired = 1;
                 return $product;
             }else{
+                $registrationDate = new DateTime($registrationDate);
+                $warrantyExpirationDate = date("Y-m-d H:i:s", $registrationTime + $warrantyTimeSeconds);
+                $warrantyExpiration = new DateTime($warrantyExpirationDate);
+
+                $diffPeriod = $warrantyExpiration->diff($registrationDate);
+                $computedPeriod = $diffPeriod->format('%y years %m months %d days');
+                $product->warrantyLeft = $computedPeriod;
                 $product->expired = 0;
                 return $product;
             }
         });
-        // $products = $sth->fetchAll(PDO::FETCH_FUNC, fn(...$fields) => new Product(...$fields));
         return $products;
     }
 
-    public static function checkWarranty(Product $products)
-    {
-        foreach($products as $product){
+  
 
-        }
-    }
+    
 
+    
+   
     
     /**
      * Get the value of id

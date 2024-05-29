@@ -75,7 +75,6 @@ class Customer
 
     public static function registrationValidation($data)
     {
-        echo "<p>registrationValidation Function</p>";
         $errors = [];
         if(filter_var($_SERVER['REQUEST_METHOD'], FILTER_UNSAFE_RAW, FILTER_NULL_ON_FAILURE) === 'POST'){
             $name = filter_input(INPUT_POST, 'name', FILTER_DEFAULT);
@@ -112,10 +111,9 @@ class Customer
             }
 
             if(empty($errors)){
-                echo "<br>";
-                var_dump($mob_no);
                 $customer = new Customer(name: $name, surname: $surname, mob_no: $mob_no, email: $email, password: $password);
-                self::registerVerification($customer);
+                $result = self::registerVerification($customer);
+                return $result;
             }
 
         }
@@ -133,7 +131,7 @@ class Customer
         if($sth->rowCount() === 0){
             self::register($customer);
         }else{
-            return  "Email already in use";
+            return "Email already in use";
         }
 }
 

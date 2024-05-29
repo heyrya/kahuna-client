@@ -2,8 +2,10 @@
 namespace app\kahuna\client\controller;
 
 use app\kahuna\client\model\Product;
+use app\kahuna\client\model\Ticket;
 use \Twig\Environment;
 use \app\kahuna\client\model\Customer;
+use app\kahuna\client\model\TicketCustomer;
 use \stdClass;
 
 class RouteController
@@ -11,14 +13,13 @@ class RouteController
     private static ?Environment $twig_customer = null;
 
     public static function showView(string $view, ?array $params = []): void {
-        // self::$currentView = ucfirst($view);
-        // $params['currentView'] = self::$currentView;
         echo self::$twig_customer->render("$view.twig", $params);
     }
     public static function setEnvironment(Environment $twig_customer): void
     {
         self::$twig_customer = $twig_customer;
     }
+
     /**Views Customer ----------------- */
 
     // Default View
@@ -44,7 +45,7 @@ class RouteController
         self::showView('registration', $params);
     }
     
-
+    // Products list per Customer View
     public static function viewProductsCustomer(array $params, array $data):void
     {
         if(isset($_SESSION['customerId'])){
@@ -62,34 +63,27 @@ class RouteController
 
     }
 
-    public static function viewProductCustomer(array $params, array $data):void
+    // Ticket View
+    public static function viewProductTicketCustomer(array $params, array $data):void
     {   
-        echo "viewProductCustomer is invoked.";
-
         if(isset($_SESSION['customerId'])){
-            
-            $params['login'] = true;
             $product = Product::getProduct($params['product_id']);
+            $params['login'] = true;
             $params['product'] = $product;
-            self::showView('products-list', $params);
+            (isset($data['warrantyExpired'])) ? $params['warrantyExpired'] = $data['warrantyExpired'] : $params['warrantyExpired'] = 0;
+            $submittedTicket = TicketCustomer::checkTicketSubmission($product->id);
+            ($submittedTicket) ? $params['ticketSubmitted'] = true : $params['ticketSubmitted'] = false;
+            self::showView('product-info-ticket', $params);    
         }else{
             self::showView('default', $params);
         }
     }
 
+    // Product Registration View
     public static function viewRegisterProductCustomer(array $params, array $data):void
     {
         if(isset($_SESSION['customerId'])){
-            $products = Product::getProductsUnregistered();
-            // $products_arr = [];
-            // foreach($products as $key=> $product){
-            //     $products_arr[$key] = new stdClass; 
-            //     $products_arr[$key]->id = $product->getId();
-            //     $products_arr[$key]->serialId = $product->getSerialId();
-            //     $products_arr[$key]->name = $product->getName();
-            //     $products_arr[$key]->warranty = $product->getWarranty();
-            // }
-            // print_r($products_arr); 
+            $products = Product::getProductsUnregistered(); 
             $params['login'] = true;
             $params['products'] = $products;
             self::showView('product-register', $params);
@@ -103,18 +97,19 @@ class RouteController
 
     /**Customer actions */
 
+    // Registration Form submission action
     public static function actionRegisterCustomer(array $params, array $data): void
     {
         $result = Customer::registrationValidation($data);
-        if(is_array($result)){
+        if(is_array($result) || is_string($result)){
+            (is_string($result)) ? $result = [$result] : $result;
             self::showView('registration-fail', ["errors"=>$result]);
         }else{
-            //TODO
             self::showView('default', ["register"=>true]);
         }
     }
 
-
+    // Sign In Action
     public static function actionLoginCustomer(array $params, array $data): void
     {
         $customer = new Customer(email: $data['email'], password: $data['password']);
@@ -126,6 +121,7 @@ class RouteController
             $_SESSION['name'] = $customer->getName();
             $_SESSION['surname'] = $customer->getSurname();
             $_SESSION['mob_no'] = $customer->getMobNo();
+            $_SESSION['ticketNo'] = [];
             self::showView('default', $params);
 
         }elseif(is_string($customer)){
@@ -134,6 +130,7 @@ class RouteController
         }
     }
 
+    // Sign Out Action
     public static function actionLogoutCustomer(array $params, array $data): void
     {
         AuthController::logout();
@@ -141,19 +138,30 @@ class RouteController
         self::showView('default', $params);
     }
 
+    // Product Registration Action
     public static function actionRegisterProductCustomer(array $params, array $data): void
     {
         $productId = filter_input(INPUT_POST, 'product_register_id', FILTER_VALIDATE_INT);
         $customerId = filter_var($_SESSION['customerId'], FILTER_VALIDATE_INT);
         $product = new Product(id: $productId);
         $product = Product::productRegisterCustomer($product, $customerId); 
-        // $params['product'] = new stdClass;
-        // $params['product']->serialId = $product->getSerialId();  
-        // $params['product']->name = $product->getName();  
-        // $params['product']->warranty = $product->getWarranty();  
         $params['product'] = $product;
         $params['product_register'] = true;
         $params['login'] = true;
+        self::showView('default', $params);
+    }
+
+    // Ticket Submission Action
+    public static function actionTicketCustomer(array $params, array $data): void
+    {
+        $customerId = filter_var($_SESSION['customerId'], FILTER_VALIDATE_INT);
+        $productId = filter_var($data['productId'], FILTER_VALIDATE_INT);
+        $ticket = new TicketCustomer(ticketMessage: $data['ticket_message']);
+        $getTicket = TicketCustomer::submitTickcet($ticket, $customerId, $productId);
+        $_SESSION['ticketNo'][] = $getTicket->getTicketNo();
+        $params['login'] = true;
+        $params['ticketSubmission'] = true;
+        $params['ticketNo'] = $getTicket->getTicketNo();
         self::showView('default', $params);
     }
 

@@ -1,0 +1,26 @@
+{% extends "container_agent.twig" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-sm-8">
+        <ul class="list-group">
+            <li class="list-group-item">Customer:<strong>{{info.name}} {{info.surname}}</strong></li>
+            <li class="list-group-item">Email:<strong>{{info.email}}</strong></li>
+            <li class="list-group-item">Product Name: <strong>{{info.productName}}</strong></li>
+            <li class="list-group-item">Serial Id: <strong>{{info.serialId}}</strong></li>
+            <li class="list-group-item">Message: <strong>{{ticket.ticketMessage}}</strong></li>
+        </ul>
+            
+            <form action="/agent/action/ticket" method="POST">
+                <div class="form-group">
+                    <input type="hidden" name="id" value="{{ticket.ticketId}}">
+                    <label for="ticketReply">Ticket Reply</label>
+                    <textarea name="ticketReply" class="form-control"></textarea>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Reply" class="form-control">
+                </div>
+            </form>
+    </div>
+</div>
+{% endblock %}

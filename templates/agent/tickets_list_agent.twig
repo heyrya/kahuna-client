@@ -1,0 +1,28 @@
+{% extends "container_agent.twig" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-sm-12">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Ticket Number</th>
+                    <th>Ticket Date</th>
+                    <th>Ticket Message</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for ticket in tickets %}
+                <tr>
+                    <td>{{ticket.ticketNo}}</td>
+                    <td>{{ticket.ticketDate}}</td>
+                    <td>{{ticket.ticketMessage}}</td>
+                    <td><a href="/agent/tickets/{{ticket.ticketId}}" class='btn btn-info' role='button'>Reply</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

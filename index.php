@@ -31,7 +31,7 @@ $router->map('GET', '/', "RouteController#viewDefaultCustomer", "view_default");
 $router->map('GET', '/customer/login', "RouteController#viewLoginCustomer", "view_login_customer");
 $router->map('GET', '/customer/register', "RouteController#viewRegisterCustomer", "view_register_customer");
 $router->map('GET', '/customer/products', "RouteController#viewProductsCustomer", "view_products_customer");
-$router->map('GET', '/customer/products/[i: product_id]', "RouteController#viewProductCustomer", "view_product_customer");
+$router->map('GET', '/customer/products/[i:product_id]', "RouteController#viewProductTicketCustomer", "view_product_ticket_customer");
 $router->map('GET', '/customer/register-product', "RouteController#viewRegisterProductCustomer", "view_register-product_customer");
 $router->map('GET', '/customer/account', "RouteController#viewAccountCustomer", "view_account_customer");
 /**---------------------- */
@@ -46,14 +46,20 @@ $router->map('POST',"/customer/action/ticket", "RouteController#actionTicketCust
 
 /**View Routes - Agent---------------------- */
 $router->map('GET', '/agent', "AgentRouteController#viewDefaultAgent", "view_default_agent");
-
-
+$router->map('GET', '/agent/login', "AgentRouteController#viewLoginAgent", "view_login_agent");
+$router->map('GET', '/agent/create-product', "AgentRouteController#viewCreateProductAgent", "view_create_product_agent");
+$router->map('GET', '/agent/tickets', "AgentRouteController#viewTicketsAgent", "view_tickets_agent");
+$router->map('GET', '/agent/tickets/[i:ticket_id]', "AgentRouteController#viewSingleTicketAgent", "view_single_ticket_agent");
 /**---------------------- */
 
+/**View Routes - Agent---------------------- */
+$router->map('POST', '/agent/action/login', 'AgentRouteController#actionLoginAgent', 'action_login_agent');
+$router->map('GET', '/agent/action/logout', 'AgentRouteController#actionLogoutAgent', 'action_logout_agent');
+$router->map('POST', '/agent/action/create-product', 'AgentRouteController#actionCreateProductAgent', 'action_create_product_agent');
+$router->map('POST', '/agent/action/ticket', 'AgentRouteController#actionTicketAgent', 'action_ticket_agent');
+/**---------------------- */
 $match = $router->match();
 if(is_array($match)){
-    var_dump($_SESSION);
-    echo "<br>";
     $target = explode('#', $match['target']);
 	$class = $target[0];
 	$action = $target[1];

@@ -1,10 +1,15 @@
 <?php
 namespace app\kahuna\client\controller;
 
+use app\kahuna\client\model\DBConnect;
+use \PDO;
+
 
 class AgentController
 {
     private const BASE_URL = "http://kahuna-api.localhost";
+    private static $db;
+
 
     public static function req(string $method, string $endpoint, mixed $data)
     {
@@ -48,12 +53,31 @@ class AgentController
             return false;
         }
 
-        $payload = [
+        $input = [
             'api_user' => $_SESSION['api_user'],
             'api_token' => $_SESSION['api_token']
         ];
 
-        // TODO
-        $result = json_decode(self::req('GET', ''));
+        $result = json_decode(self::req('GET', '/agent/token', $input));
+        return $result->data->valid ?? false;
+        
     }
+
+    public static function getCustomerProductInfo(int $customerproductId)
+    {
+        self::$db = DBConnect::getInstance()->getConnection();
+        $sql = <<<SQL
+        SELECT customer.name, customer.surname, customer.email, productstock.serialId, productstock.name AS 'productName'
+        FROM customerproduct 
+        JOIN customer ON customerproduct.customerId = customer.id 
+        JOIN productstock ON customerproduct.productstockId = productstock.id 
+        WHERE customerproduct.id = :customerproductId; 
+        SQL;
+        $sth = self::$db->prepare($sql);
+        $sth->bindValue('customerproductId', $customerproductId);
+        $sth->execute();
+        $result = $sth->fetch(PDO::FETCH_ASSOC);
+        return $result;
+    }
+
 }

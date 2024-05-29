@@ -24,6 +24,96 @@
     </div>
 </div>
 {% endif %}
+{% if ticketSubmission %}
+<div class="row">
+    <div class="alert alert-success">
+        Ticket has been successfully added. Ticket Reference is: {{ticketNo}}
+    </div>
+</div>
+{% endif %}
 
-<p>Default page</p>
+
+{# Message Display #}
+<div class="row">
+    
+    <div class="col-sm-12">
+        <h3>Welcome to Kahuna Ltd</h3>
+        <p>Please login to view or register the product brought from Kahuna. <br><br>Should you encounter any problems with the product, please submit a ticket, as long as the product is under warranty. <br><br>Thanks for shopping with us. <br> From all the Kahuna team</p>
+    </div>
+</div>
+
+{# Products Display #}
+<div class="row">
+    <div class="row">
+        <div class="col-sm-12">
+            <h3>Products that can be found in our stores</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="thumbnail">
+                <img src="/img/fridge_freezer.jpg" alt="fridge-freezer" style="width: 100%; height: 300px;">
+                <div class="caption">
+                    <p>Fridge Freezer</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="thumbnail">
+                <img src="/img/microwave.jpg" alt="microwave" style="width: 100%; height: 300px;">
+                <div class="caption">
+                    <p>Microwave Oven</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="thumbnail">
+                <img src="/img/washing-machine.webp" alt="washing-machine" style="width: 100%; height: 300px;">
+                <div class="caption">
+                    <p>Washing machine</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Weekly Special Offers #}
+<div class="row">
+    <div class="row" style="text-align: center;">
+        <h1 class="display-5">Weekly Special Offers</h1>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <h4>Tumble Dryer</h4>
+            <div class="thumbnail">
+                <img src="/img/tumble_dryer.webp" alt="tumble-dryer" style="width: 100%; height: 350px;">
+                <div class="caption">
+                    <p>was €200</p>
+                    <h4><strong>now €150</strong></h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <h4>Air Fryer</h4>
+            <div class="thumbnail">
+                <img src="/img/air_fryer.jpg" alt="air-fryer" style="width: 100%; height: 350px;">
+                <div class="caption">
+                    <p>was €120</p>
+                    <h4><strong>now €85</strong></h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <h4>Juice Blender</h4>
+            <div class="thumbnail">
+                <img src="/img/juice_blender.jpg" alt="juice_blender" style="width: 100%; height: 350px;">
+                <div class="caption">
+                    <p>was €150</p>
+                    <h4><strong>now €90</strong></h4>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}

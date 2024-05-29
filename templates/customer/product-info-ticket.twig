@@ -1,0 +1,64 @@
+{% extends "container.twig" %}
+
+{% block content %}
+
+<div class="row">
+
+    <div class="col-sm-9">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>serialId</th>
+                    <th>Product</th>
+                    <th>Warranty Period Left</th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{product.serialId}}</td>
+                    <td>{{product.name}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="col-sm-3"></div>
+</div>
+{% if warrantyExpired == true %}
+    <div class="row">
+        <div class="alert alert-info">
+            Sorry a  ticket could not be lodged since the warranty has expired.
+        </div>
+    </div>
+{% else %}
+    
+    {% if ticketSubmitted %}
+    <div class="row">
+        <div class="alert alert-success">
+            A ticket has already been submitted. An agent will reply to you. Thanks
+        </div>
+    </div>
+    {% elseif ticketSubmitted == false %}
+            
+    <div class="row">
+        <div class="col-sm-9">
+            <form action="/customer/action/ticket" method="POST">
+                <input type="hidden" name="productId" value="{{product.id}}">
+                <div class="form-group">
+                    <label for="ticket_message">Please describe the problem</label>
+                    <textarea name="ticket_message" class="form-control" minlength="6" required></textarea>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Submit Ticket" class="form-control">
+                </div>
+            </form>
+        </div>
+        <div class="col-sm-3"></div>
+        
+    </div>
+    {% endif %}
+{% endif %}
+
+
+
+{% endblock %}

@@ -2,15 +2,15 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-sm-9">
+    <div class="col-sm-12">
         <table class="table table-striped">
             <thead>
                 <tr>
                     <th>Serial Id</th>
                     <th>Product</th>
                     <th>Warranty</th>
+                    <th>Warranty Period Left</th>
                     <th>Info</th>
-                    <th>Ticket</th>
                 </tr>
             </thead>
             <tbody>
@@ -19,13 +19,17 @@
                     <td>{{ product.serialId }}</td>
                     <td>{{ product.name }}</td>
                     <td>{{ product.expired == true ? "Warranty has expired" : "Warramty can still be availed."}}</td>
-                    {# link to product #}
-                    <td><a href="/customer/products/{{ product.id }}" class="btn btn-info" role="button">Info</a></td>
-                    {% if product.expired == false %}
+                    <td>{{product.warrantyLeft}}</td>
+                    {% if product.expired == true %}
+                        <td>
+                            <form action="/customer/products/{{ product.id }}" method="get">
+                                <input type="hidden" name="warrantyExpired" value="{{product.expired}}">
+                                <input type="submit" value="Info" class="btn btn-info">
+                            </form>
+                        </td>
+                    {% elseif product.expired == false %}
                         <td><a href='/customer/products/{{ product.id }}' class='btn btn-info' role='button'>Submit Ticket</a></td>
-                    {% elseif product.expired == true %}
-                        <td></td>
-                    {% endif %}
+                    {% endif %}                  
 
                 </tr>
             {% endfor %}
